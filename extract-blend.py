@@ -19,14 +19,21 @@ def extract_blend(executable_url):
         print("Processing '" + exe_name + "'...")
 
         line = b""
+        pos2 = None
         while True:
             line_temp = executable_file.read(1024)
             if line_temp == b"":
-                print("The file '" + exe_name + "' does not have a .blend " \
-                      "file")
+                if pos2 != None:
+                    print("The file '" + exe_name + "' may contain an " \
+                          "encrypted .blend file")
+                else:
+                    print("The file '" + exe_name + "' does not have a .blend " \
+                          "file")
                 break
 
             line = line + line_temp
+            if pos2 == None:
+                pos2 = re.search(b"BLENDERFI", line)
             pos = re.search(b"BLENDER_[v|V][0-9]{3}REND", line)
             if not pos == None:
                 try:
